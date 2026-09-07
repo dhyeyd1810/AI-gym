@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Gym & Fitness Assistant</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', sans-serif; background: #0f0f13; color: #e0e0e0; }
+  header { background: linear-gradient(135deg, #1a1a2e, #16213e); padding: 20px 40px; display: flex; align-items: center; gap: 16px; border-bottom: 1px solid #2a2a3e; }
+  header h1 { font-size: 22px; font-weight: 600; color: #fff; }
+  header span { background: #00d4aa22; color: #00d4aa; font-size: 11px; padding: 3px 10px; border-radius: 20px; border: 1px solid #00d4aa44; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 20px; padding: 28px 32px; }
+  .card { background: #1a1a2e; border: 1px solid #2a2a3e; border-radius: 16px; padding: 24px; }
+  .card h2 { font-size: 14px; font-weight: 600; color: #00d4aa; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.5px; }
+  input, select { width: 100%; background: #0f0f1a; border: 1px solid #2a2a3e; border-radius: 8px; padding: 10px 12px; color: #e0e0e0; font-size: 13px; margin-bottom: 10px; outline: none; }
+  input:focus, select:focus { border-color: #00d4aa; }
+  button { width: 100%; background: #00d4aa; color: #0f0f13; border: none; border-radius: 8px; padding: 10px; font-size: 13px; font-weight: 600; cursor: pointer; margin-top: 4px; }
+  button:hover { background: #00bfa0; }
+  .result { margin-top: 14px; background: #0f0f1a; border-radius: 10px; padding: 14px; font-size: 13px; line-height: 1.7; border: 1px solid #2a2a3e; min-height: 48px; color: #b0b0c0; }
+  .result b { color: #00d4aa; }
+  .stat { display: flex; justify-content: space-between; margin-bottom: 6px; }
+  .stat span:last-child { color: #00d4aa; font-weight: 600; }
+  .badge { display: inline-block; padding: 2px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+  .badge.good { background: #00d4aa22; color: #00d4aa; }
+  .badge.warn { background: #ffaa0022; color: #ffaa00; }
+  .badge.bad  { background: #ff444422; color: #ff4444; }
+  canvas { margin-top: 14px; }
+  .chat-box { height: 160px; overflow-y: auto; background: #0f0f1a; border-radius: 10px; padding: 12px; font-size: 13px; line-height: 1.7; border: 1px solid #2a2a3e; margin-bottom: 10px; }
+  .chat-msg { margin-bottom: 8px; }
+  .chat-msg.user span { color: #00d4aa; }
+  .chat-msg.bot span { color: #b0b0c0; }
+  .iot-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+  .iot-stat { background: #0f0f1a; border-radius: 10px; padding: 12px; text-align: center; border: 1px solid #2a2a3e; }
+  .iot-stat .val { font-size: 26px; font-weight: 700; color: #00d4aa; }
+  .iot-stat .lbl { font-size: 11px; color: #606080; margin-top: 2px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>🏋️ AI Gym & Fitness Assistant</h1>
+  </div>
+  <span>All 7 Modules Active</span>
+</header>
+
+<div class="grid">
+
+  <!-- Module 2: BMI + Diet -->
+  <div class="card">
+    <h2>📊 BMI & Diet Planner</h2>
+    <input id="uname" placeholder="Your name" />
+    <input id="uage" type="number" placeholder="Age" />
+    <input id="uheight" type="number" placeholder="Height (cm)" />
+    <input id="uweight" type="number" placeholder="Weight (kg)" />
+    <select id="ugoal">
+      <option value="lose">Lose Weight</option>
+      <option value="gain">Gain Muscle</option>
+      <option value="maintain">Maintain</option>
+    </select>
+    <button onclick="getBMI()">Calculate BMI + Get Diet Plan</button>
+    <div class="result" id="bmi-result">Fill in your details and click above.</div>
+  </div>
+
+  <!-- Module 4: Habit Tracker -->
+  <div class="card">
+    <h2>📅 Workout Habit Tracker</h2>
+    <input id="uid" placeholder="Your user ID (any name)" />
+    <select id="ucompleted">
+      <option value="true">✅ Completed today's workout</option>
+      <option value="false">❌ Skipped today</option>
+    </select>
+    <button onclick="logWorkout()">Log Workout</button>
+    <div class="result" id="habit-result">Log your workout to see streak and motivation.</div>
+    <canvas id="streakChart" height="100"></canvas>
+  </div>
+
+  <!-- Module 3: IoT Smart Gym -->
+  <div class="card">
+    <h2>📡 Smart Gym (IoT Simulator)</h2>
+    <div class="iot-grid">
+      <div class="iot-stat"><div class="val" id="hr">--</div><div class="lbl">Heart Rate (BPM)</div></div>
+      <div class="iot-stat"><div class="val" id="res">--</div><div class="lbl">Resistance Level</div></div>
+      <div class="iot-stat"><div class="val" id="cal">--</div><div class="lbl">Calories Burned</div></div>
+      <div class="iot-stat"><div class="val" id="zone">--</div><div class="lbl">Zone</div></div>
+    </div>
+    <button onclick="getIoT()">Read Equipment Status</button>
+    <div class="result" id="iot-result">Click to simulate IoT sensor reading.</div>
+  </div>
+
+  <!-- Module 6: Performance Score -->
+  <div class="card">
+    <h2>🎯 Performance Analyzer</h2>
+    <input id="exercise" placeholder="Exercise name (e.g. Squat)" />
+    <input id="total-reps" type="number" placeholder="Total reps attempted" />
+    <input id="correct-reps" type="number" placeholder="Correct form reps" />
+    <input id="duration" type="number" placeholder="Duration (minutes)" />
+    <button onclick="getScore()">Analyze Performance</button>
+    <div class="result" id="score-result">Enter your workout data above.</div>
+  </div>
+
+  <!-- Module 7: Gym Recommender -->
+  <div class="card">
+    <h2>🗺️ Gym & Program Recommender</h2>
+    <select id="rec-goal">
+      <option value="lose">Weight Loss</option>
+      <option value="gain">Muscle Gain</option>
+      <option value="maintain">Maintenance</option>
+    </select>
+    <button onclick="getRecommendations()">Get Recommendations</button>
+    <div class="result" id="rec-result">Select your goal and get personalized suggestions.</div>
+  </div>
+
+  <!-- Module 5: Virtual Gym Buddy -->
+  <div class="card">
+    <h2>🤖 Virtual Gym Buddy</h2>
+    <div class="chat-box" id="chat-box">
+      <div class="chat-msg bot"><span>Buddy: Hey! I'm your AI gym buddy. Tell me how you're feeling today!</span></div>
+    </div>
+    <input id="chat-input" placeholder="Type a message..." onkeydown="if(event.key==='Enter')sendChat()" />
+    <input id="chat-streak" type="number" placeholder="Your current streak (days)" />
+    <button onclick="sendChat()">Send Message</button>
+  </div>
+
+</div>
+
+<script>
+const API = "http://127.0.0.1:8000";
+let streakHistory = [];
+
+async function getBMI() {
+  const res = await fetch(`${API}/bmi`, {
+    method: "POST", headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({
+      name: document.getElementById("uname").value || "User",
+      age: parseInt(document.getElementById("uage").value) || 25,
+      height_cm: parseFloat(document.getElementById("uheight").value),
+      weight_kg: parseFloat(document.getElementById("uweight").value),
+      goal: document.getElementById("ugoal").value
+    })
+  });
+  const d = await res.json();
+  const badgeClass = d.category === "Normal" ? "good" : d.category === "Overweight" ? "warn" : "bad";
+  document.getElementById("bmi-result").innerHTML = `
+    <div class="stat"><span>BMI</span><span><b>${d.bmi}</b> <span class="badge ${badgeClass}">${d.category}</span></span></div>
+    <div class="stat"><span>Daily Calories</span><span><b>${d.diet_plan.calories} kcal</b></span></div>
+    <b>Breakfast:</b> ${d.diet_plan.breakfast}<br>
+    <b>Lunch:</b> ${d.diet_plan.lunch}<br>
+    <b>Dinner:</b> ${d.diet_plan.dinner}
+  `;
+}
+
+let streakChart;
+async function logWorkout() {
+  const res = await fetch(`${API}/log-workout`, {
+    method: "POST", headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({
+      user_id: document.getElementById("uid").value || "user1",
+      completed: document.getElementById("ucompleted").value === "true"
+    })
+  });
+  const d = await res.json();
+  const riskClass = d.skip_risk > 0.6 ? "bad" : d.skip_risk > 0.3 ? "warn" : "good";
+  document.getElementById("habit-result").innerHTML = `
+    <div class="stat"><span>Current Streak</span><span><b>${d.streak} days 🔥</b></span></div>
+    <div class="stat"><span>Skip Risk</span><span><span class="badge ${riskClass}">${Math.round(d.skip_risk*100)}%</span></span></div>
+    <b>Buddy says:</b> ${d.motivation}
+  `;
+  streakHistory.push(d.streak);
+  if (streakHistory.length > 7) streakHistory.shift();
+  if (streakChart) streakChart.destroy();
+  streakChart = new Chart(document.getElementById("streakChart"), {
+    type: "bar",
+    data: {
+      labels: streakHistory.map((_, i) => `Log ${i+1}`),
+      datasets: [{ label: "Streak", data: streakHistory, backgroundColor: "#00d4aa55", borderColor: "#00d4aa", borderWidth: 2, borderRadius: 6 }]
+    },
+    options: { plugins: { legend: { display: false } }, scales: { x: { ticks: { color: "#606080" }, grid: { color: "#2a2a3e" } }, y: { ticks: { color: "#606080" }, grid: { color: "#2a2a3e" }, beginAtZero: true } } }
+  });
+}
+
+async function getIoT() {
+  const res = await fetch(`${API}/equipment-status`);
+  const d = await res.json();
+  document.getElementById("hr").textContent = d.heart_rate;
+  document.getElementById("res").textContent = d.resistance_level;
+  document.getElementById("cal").textContent = d.calories_burned;
+  const zone = d.heart_rate > 160 ? "🔴 High" : d.heart_rate < 110 ? "🟡 Low" : "🟢 Optimal";
+  document.getElementById("zone").textContent = zone;
+  document.getElementById("iot-result").innerHTML = `<b>AI Recommendation:</b> ${d.recommendation}`;
+}
+
+async function getScore() {
+  const res = await fetch(`${API}/performance-score`, {
+    method: "POST", headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({
+      exercise: document.getElementById("exercise").value || "Exercise",
+      total_reps: parseInt(document.getElementById("total-reps").value),
+      correct_reps: parseInt(document.getElementById("correct-reps").value),
+      duration_minutes: parseFloat(document.getElementById("duration").value)
+    })
+  });
+  const d = await res.json();
+  const gradeClass = d.grade === "Excellent" ? "good" : d.grade === "Good" ? "good" : d.grade === "Average" ? "warn" : "bad";
+  document.getElementById("score-result").innerHTML = `
+    <div class="stat"><span>Performance Score</span><span><b>${d.performance_score}/100</b> <span class="badge ${gradeClass}">${d.grade}</span></span></div>
+    <div class="stat"><span>Form Accuracy</span><span><b>${d.accuracy_pct}%</b></span></div>
+    <div class="stat"><span>Efficiency</span><span><b>${d.efficiency_pct}%</b></span></div>
+  `;
+}
+
+async function getRecommendations() {
+  const goal = document.getElementById("rec-goal").value;
+  const res = await fetch(`${API}/recommend/${goal}`);
+  const d = await res.json();
+  const gyms = d.nearby_gyms.map(g => `<div class="stat"><span>🏢 ${g.name}</span><span>⭐ ${g.rating}</span></div>`).join("");
+  const programs = d.suggested_programs.map(p => `• ${p}`).join("<br>");
+  document.getElementById("rec-result").innerHTML = `<b>Nearby Gyms:</b><br>${gyms}<br><b>Suggested Programs:</b><br>${programs}`;
+}
+
+async function sendChat() {
+  const msg = document.getElementById("chat-input").value;
+  const streak = parseInt(document.getElementById("chat-streak").value) || 0;
+  if (!msg.trim()) return;
+  const box = document.getElementById("chat-box");
+  box.innerHTML += `<div class="chat-msg user"><span>You: ${msg}</span></div>`;
+  const res = await fetch(`${API}/chat`, {
+    method: "POST", headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({ message: msg, streak })
+  });
+  const d = await res.json();
+  box.innerHTML += `<div class="chat-msg bot"><span>Buddy: ${d.reply}</span></div>`;
+  box.innerHTML += `<div class="chat-msg bot"><span>Buddy: ${d.streak_message}</span></div>`;
+  box.scrollTop = box.scrollHeight;
+  document.getElementById("chat-input").value = "";
+}
+</script>
+</body>
+</html>
