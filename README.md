@@ -1,4 +1,4 @@
-﻿# 🏋️‍♂️ AI Gym & Fitness Assistant
+﻿#  AI Gym & Fitness Assistant
 
 An intelligent, multi-module AI-powered fitness and health ecosystem combining **FastAPI**, **MediaPipe Computer Vision**, **Predictive Machine Learning**, **IoT Telemetry Simulation**, and an interactive **Chart.js Dashboard**.
 
@@ -6,19 +6,19 @@ An intelligent, multi-module AI-powered fitness and health ecosystem combining *
 
 ---
 
-## 🚀 Key Modules & Capabilities
+##  Key Modules & Capabilities
 
-1. **🤖 AI Gym Trainer**: Pose detection and real-time exercise rep counting via MediaPipe and joint-angle calculation.
-2. **🥗 AI Dietician & Nutrition Planner**: Automated BMI calculation with personalized daily caloric targets and meal plans based on fitness goals (Weight Loss, Muscle Gain, Maintenance).
-3. **📡 Smart Gym (IoT Simulator)**: Real-time telemetry monitoring heart rate zones, resistance levels, and dynamic calorie burn rates.
-4. **📊 Habit & Consistency Tracker**: Workout streak logging with machine learning skip-risk forecasting.
-5. **💬 Virtual Gym Buddy**: Interactive conversational companion for motivation, form cues, and recovery guidance.
-6. **🎯 Performance & Form Analyzer**: Workout scoring engine analyzing rep cadence, form accuracy, and efficiency ratings.
-7. **📍 Gym & Program Recommender**: Intelligent recommendation system matching fitness goals with targeted splits (PPL, 5x5, HIIT) and local facilities.
+1. ** AI Gym Trainer**: Pose detection and real-time exercise rep counting via MediaPipe and joint-angle calculation.
+2. ** AI Dietician & Nutrition Planner**: Automated BMI calculation with personalized daily caloric targets and meal plans based on fitness goals (Weight Loss, Muscle Gain, Maintenance).
+3. ** Smart Gym (IoT Simulator)**: Real-time telemetry monitoring heart rate zones, resistance levels, and dynamic calorie burn rates.
+4. ** Habit & Consistency Tracker**: Workout streak logging with machine learning skip-risk forecasting.
+5. ** Virtual Gym Buddy**: Interactive conversational companion for motivation, form cues, and recovery guidance.
+6. ** Performance & Form Analyzer**: Workout scoring engine analyzing rep cadence, form accuracy, and efficiency ratings.
+7. ** Gym & Program Recommender**: Intelligent recommendation system matching fitness goals with targeted splits (PPL, 5x5, HIIT) and local facilities.
 
 ---
 
-## 🛠️ Tech Stack
+##  Tech Stack
 
 | Layer | Technology |
 |---|---|
@@ -44,7 +44,7 @@ AI_gym/
 
 ---
 
-## ⚡ Quick Start Guide
+##  Quick Start Guide
 
 ### 1. Prerequisites
 - Python 3.10 or higher
